@@ -235,6 +235,8 @@ select { font-family:'Courier New',monospace; font-size:14px; padding:8px; borde
     <button class="btn btn-secondary btn-block btn-small" style="margin:8px 0" onclick="exportData()">📦 EXPORT JSON</button>
     <button class="btn btn-secondary btn-block btn-small" style="margin:8px 0" onclick="document.getElementById('importFile').click()">📂 IMPORT JSON</button>
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+    <button class="btn btn-secondary btn-block btn-small" style="margin:8px 0" onclick="resetStreak()">🔥 RESET STREAK</button>
+    <button class="btn btn-secondary btn-block btn-small" style="margin:8px 0" onclick="clearHistory()">📜 CLEAR HISTORY</button>
     <button class="btn btn-danger btn-block btn-small" style="margin-top:12px" onclick="clearAllData()">🗑️ CLEAR ALL DATA</button>
   </div>
   <div class="card">
@@ -823,6 +825,26 @@ function importData(event) {
     } catch(err) { alert('Invalid JSON file'); }
   };
   reader.readAsText(file);
+}
+
+function resetStreak() {
+  db.streak = 0;
+  db.lastWorkoutDate = null;
+  saveDB(db);
+  alert('✓ Streak reset');
+  renderHome();
+}
+
+function clearHistory() {
+  if(!confirm('Clear all workout history? Templates will be kept.')) return;
+  db.history = [];
+  db.prs = {};
+  db.streak = 0;
+  db.lastWorkoutDate = null;
+  db.activeWorkout = null;
+  saveDB(db);
+  alert('✓ History cleared');
+  showScreen('screenSettings');
 }
 
 function clearAllData() {
