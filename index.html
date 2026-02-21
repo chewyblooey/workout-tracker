@@ -343,6 +343,7 @@ function updateStreak() {
 let currentExerciseIdx = 0;
 let timerInterval = null;
 let timerRemaining = 0;
+let timerEndTime = null;
 
 function startWorkout(template) {
   const exercises = {};
@@ -427,6 +428,7 @@ function renderWorkout() {
         <div class="set-check ${checkedClass}" onclick="completeSet('${exName}',${i})">
           ${set.done ? '✓' : ''}
         </div>
+        <div class="set-check" onclick="deleteSet('${exName}',${i})" style="color:var(--danger);font-size:12px;">✕</div>
       </div>`;
   });
 
@@ -442,6 +444,14 @@ function renderWorkout() {
 function updateSet(exercise, idx, field, value) {
   db.activeWorkout.exercises[exercise].sets[idx][field] = parseInt(value) || 0;
   saveDB(db);
+}
+
+function deleteSet(exercise, idx) {
+  const sets = db.activeWorkout.exercises[exercise].sets;
+  if(sets.length <= 1) return; // keep at least one set
+  sets.splice(idx, 1);
+  saveDB(db);
+  renderWorkout();
 }
 
 function addSet(exercise) {
@@ -469,7 +479,7 @@ function completeSet(exercise, idx) {
 function startTimer() {
   clearInterval(timerInterval);
   const restTime = db.settings.restTime || 180;
-  timerRemaining = restTime;
+  timerEndTime = Date.now() + (restTime * 1000);
   
   const container = document.getElementById('timerContainer');
   container.style.display = 'block';
@@ -477,17 +487,21 @@ function startTimer() {
   updateTimerDisplay();
   
   timerInterval = setInterval(() => {
-    timerRemaining--;
     updateTimerDisplay();
-    if(timerRemaining <= 0) {
-      clearInterval(timerInterval);
-      timerDone();
-    }
-  }, 1000);
+  }, 250);
 }
 
 function updateTimerDisplay() {
   const restTime = db.settings.restTime || 180;
+  const now = Date.now();
+  timerRemaining = Math.max(0, Math.ceil((timerEndTime - now) / 1000));
+  
+  if(timerRemaining <= 0) {
+    clearInterval(timerInterval);
+    timerDone();
+    return;
+  }
+  
   const min = Math.floor(timerRemaining / 60);
   const sec = timerRemaining % 60;
   document.getElementById('timerDisplay').textContent = `${min}:${sec.toString().padStart(2,'0')}`;
