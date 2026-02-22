@@ -71,7 +71,7 @@ Bryan — lifting 4-5x/week, tracking progressive overload, wants minimal fricti
 ### Day 1: Chest / Shoulders
 - Bench Press
 - Chest Flys (cable or dumbbell)
-- Decline Dumbbell Press
+- Decline Barbell Press
 - Front Shoulder Raises
 - Lateral Shoulder Raises
 - *Added — Overhead Press (builds functional pressing strength + shoulders)*
@@ -112,6 +112,12 @@ Bryan — lifting 4-5x/week, tracking progressive overload, wants minimal fricti
 - Repo: chewyblooey/workout-tracker (GitHub Pages)
 - Same workflow as kanban board
 
+## R1 QA Notes (RESOLVED)
+- ✅ Rest timer runs slow when navigating away — fixed: wall-clock based timer
+- ✅ Add ability to remove/delete individual sets — fixed: ✕ button per set
+
+## Backlog
+
 ## Nice-to-Haves (v2)
 - Weekly volume summary
 - Body weight log
@@ -119,6 +125,15 @@ Bryan — lifting 4-5x/week, tracking progressive overload, wants minimal fricti
 - Share workout with someone
 - Calorie/protein quick log
 - Superset/circuit timer mode
+
+## Roadmap — Native iOS App (v3)
+Status: Future — needs Apple Developer account + Xcode confirmed
+- Rebuild as native SwiftUI iOS app
+- WatchOS companion app (log sets from wrist, rest timer on Watch)
+- HealthKit integration (read heart rate, calories, workout sessions, sleep, VO2 max from Apple Watch)
+- Correlate data: sleep quality vs performance, heart rate during sets, recovery trends
+- MyFitnessPal API integration (nutrition/macros/protein tracking — all-in-one view)
+- Prerequisites: Apple Developer account ($99/yr), Xcode on Bryan's Mac
 
 ## Bench Press Program (4 weeks)
 Built to break through 165 plateau:
