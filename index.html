@@ -279,7 +279,7 @@ function defaultDB() {
       },
       {
         id:'legs-triceps', name:'Legs / Triceps', emoji:'🦵',
-        exercises:['Squats','Romanian Deadlifts','Walking Lunges','Calf Raises','Tricep Pushdowns','Overhead Tricep Extension','Dips']
+        exercises:['Leg Press','Romanian Deadlifts','Walking Lunges','Calf Raises','Tricep Pushdowns','Overhead Tricep Extension','Dips']
       }
     ],
     history: [],
@@ -293,11 +293,109 @@ function defaultDB() {
         name: 'Bench to 175',
         activeWeek: 1,
         weeks: {
-          1: { label:'Weeks 1-2 Heavy', sets:[{weight:135,reps:8},{weight:155,reps:5},{weight:165,reps:4},{weight:165,reps:4},{weight:165,reps:4}] },
-          2: { label:'Weeks 1-2 Volume', sets:[{weight:135,reps:10},{weight:150,reps:8},{weight:150,reps:8},{weight:150,reps:8}] },
-          3: { label:'Week 3 Heavy', sets:[{weight:135,reps:8},{weight:155,reps:5},{weight:170,reps:3},{weight:170,reps:3},{weight:170,reps:3}] },
-          4: { label:'Week 3 Volume', sets:[{weight:135,reps:10},{weight:155,reps:8},{weight:155,reps:8},{weight:155,reps:8}] },
-          5: { label:'Week 4 Test', sets:[{weight:135,reps:5},{weight:155,reps:3},{weight:165,reps:2},{weight:175,reps:1},{weight:180,reps:1}] }
+          1: { label:'Wk 1-2 Heavy', sets:[{weight:135,reps:8},{weight:155,reps:5},{weight:165,reps:4},{weight:165,reps:4},{weight:165,reps:4}] },
+          2: { label:'Wk 1-2 Volume', sets:[{weight:135,reps:10},{weight:150,reps:8},{weight:150,reps:8},{weight:150,reps:8}] },
+          3: { label:'Wk 3 Heavy', sets:[{weight:135,reps:8},{weight:155,reps:5},{weight:170,reps:3},{weight:170,reps:3},{weight:170,reps:3}] },
+          4: { label:'Wk 3 Volume', sets:[{weight:135,reps:10},{weight:155,reps:8},{weight:155,reps:8},{weight:155,reps:8}] },
+          5: { label:'Wk 4 Test', sets:[{weight:135,reps:5},{weight:155,reps:3},{weight:165,reps:2},{weight:175,reps:1},{weight:180,reps:1}] }
+        }
+      },
+      'Lat Pulldowns': {
+        name: 'Back Strength',
+        activeWeek: 1,
+        weeks: {
+          1: { label:'Standard', sets:[{weight:80,reps:10},{weight:95,reps:8},{weight:105,reps:6},{weight:115,reps:6}] }
+        }
+      },
+      'Straight-Arm Pulldowns': {
+        name: 'Back Strength',
+        activeWeek: 1,
+        weeks: {
+          1: { label:'Standard', sets:[{weight:70,reps:12},{weight:85,reps:10},{weight:100,reps:10}] }
+        }
+      },
+      'Seated Cable Rows': {
+        name: 'Back Strength',
+        activeWeek: 1,
+        weeks: {
+          1: { label:'Standard', sets:[{weight:70,reps:10},{weight:80,reps:10},{weight:90,reps:8}] }
+        }
+      },
+      'Back Extensions': {
+        name: 'Back Strength',
+        activeWeek: 1,
+        weeks: {
+          1: { label:'Standard', sets:[{weight:45,reps:15},{weight:45,reps:15},{weight:45,reps:15}] }
+        }
+      },
+      'Dumbbell Curls': {
+        name: 'Bicep Builder',
+        activeWeek: 1,
+        weeks: {
+          1: { label:'Standard', sets:[{weight:20,reps:10},{weight:25,reps:10},{weight:25,reps:8}] }
+        }
+      },
+      'Barbell Curls': {
+        name: 'Bicep Builder',
+        activeWeek: 1,
+        weeks: {
+          1: { label:'Standard', sets:[{weight:30,reps:10},{weight:40,reps:10},{weight:40,reps:8}] }
+        }
+      },
+      'Hammer Curls': {
+        name: 'Bicep Builder',
+        activeWeek: 1,
+        weeks: {
+          1: { label:'Standard', sets:[{weight:15,reps:12},{weight:20,reps:10},{weight:20,reps:10}] }
+        }
+      },
+      'Leg Press': {
+        name: 'Leg Strength',
+        activeWeek: 1,
+        weeks: {
+          1: { label:'Standard', sets:[{weight:180,reps:15},{weight:225,reps:12},{weight:250,reps:10},{weight:270,reps:8}] }
+        }
+      },
+      'Romanian Deadlifts': {
+        name: 'Leg Strength',
+        activeWeek: 1,
+        weeks: {
+          1: { label:'Standard', sets:[{weight:95,reps:10},{weight:115,reps:8},{weight:135,reps:8}] }
+        }
+      },
+      'Walking Lunges': {
+        name: 'Leg Strength',
+        activeWeek: 1,
+        weeks: {
+          1: { label:'Standard', sets:[{weight:15,reps:12},{weight:20,reps:12},{weight:20,reps:10}] }
+        }
+      },
+      'Calf Raises': {
+        name: 'Leg Strength',
+        activeWeek: 1,
+        weeks: {
+          1: { label:'Standard', sets:[{weight:180,reps:20},{weight:205,reps:20},{weight:225,reps:15}] }
+        }
+      },
+      'Tricep Pushdowns': {
+        name: 'Tricep Builder',
+        activeWeek: 1,
+        weeks: {
+          1: { label:'Standard', sets:[{weight:25,reps:12},{weight:30,reps:10},{weight:35,reps:10},{weight:40,reps:8}] }
+        }
+      },
+      'Overhead Tricep Extension': {
+        name: 'Tricep Builder',
+        activeWeek: 1,
+        weeks: {
+          1: { label:'Standard', sets:[{weight:15,reps:12},{weight:20,reps:10},{weight:20,reps:10}] }
+        }
+      },
+      'Dips': {
+        name: 'Tricep Builder',
+        activeWeek: 1,
+        weeks: {
+          1: { label:'Bodyweight', sets:[{weight:0,reps:5},{weight:0,reps:5},{weight:0,reps:4}] }
         }
       }
     },
