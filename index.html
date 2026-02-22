@@ -240,6 +240,10 @@ select { font-family:'Courier New',monospace; font-size:14px; padding:8px; borde
     <button class="btn btn-danger btn-block btn-small" style="margin-top:12px" onclick="clearAllData()">🗑️ CLEAR ALL DATA</button>
   </div>
   <div class="card">
+    <h3>🎯 TRAINING PROGRAMS</h3>
+    <div id="programEditor"></div>
+  </div>
+  <div class="card">
     <h3>EDIT TEMPLATES</h3>
     <div id="templateEditor"></div>
     <button class="btn btn-secondary btn-block btn-small" style="margin-top:8px" onclick="addTemplate()">+ ADD TEMPLATE</button>
@@ -278,12 +282,26 @@ function defaultDB() {
         exercises:['Squats','Romanian Deadlifts','Walking Lunges','Calf Raises','Tricep Pushdowns','Overhead Tricep Extension','Dips']
       }
     ],
-    history: [], // {date, exercise, sets:[{weight,reps}], templateId?}
-    activeWorkout: null, // {templateId, name, date, exercises:{name,sets:[{weight,reps,done}]}}
+    history: [],
+    activeWorkout: null,
     streak: 0,
     lastWorkoutDate: null,
     settings: { restTime: 180 },
-    prs: {} // exercise -> {weight, reps, estimated1rm, date}
+    prs: {},
+    programs: {
+      'Bench Press': {
+        name: 'Bench to 175',
+        activeWeek: 1,
+        weeks: {
+          1: { label:'Weeks 1-2 Heavy', sets:[{weight:135,reps:8},{weight:155,reps:5},{weight:165,reps:4},{weight:165,reps:4},{weight:165,reps:4}] },
+          2: { label:'Weeks 1-2 Volume', sets:[{weight:135,reps:10},{weight:150,reps:8},{weight:150,reps:8},{weight:150,reps:8}] },
+          3: { label:'Week 3 Heavy', sets:[{weight:135,reps:8},{weight:155,reps:5},{weight:170,reps:3},{weight:170,reps:3},{weight:170,reps:3}] },
+          4: { label:'Week 3 Volume', sets:[{weight:135,reps:10},{weight:155,reps:8},{weight:155,reps:8},{weight:155,reps:8}] },
+          5: { label:'Week 4 Test', sets:[{weight:135,reps:5},{weight:155,reps:3},{weight:165,reps:2},{weight:175,reps:1},{weight:180,reps:1}] }
+        }
+      }
+    },
+    programProgress: {}
   };
 }
 
@@ -345,20 +363,37 @@ let timerInterval = null;
 let timerRemaining = 0;
 let timerEndTime = null;
 
+function getProgramSets(exercise) {
+  if(!db.programs || !db.programs[exercise]) return null;
+  const prog = db.programs[exercise];
+  const week = prog.activeWeek || 1;
+  const weekData = prog.weeks[week];
+  if(!weekData) return null;
+  return weekData;
+}
+
 function startWorkout(template) {
   const exercises = {};
   template.exercises.forEach(ex => {
-    const last = getLastSets(ex);
-    const sets = [];
-    const numSets = last.length || 3;
-    for(let i=0; i<numSets; i++) {
-      sets.push({
-        weight: last[i] ? last[i].weight : 135,
-        reps: last[i] ? last[i].reps : 10,
-        done: false
-      });
+    const progWeek = getProgramSets(ex);
+    if(progWeek) {
+      exercises[ex] = {
+        sets: progWeek.sets.map(s => ({weight:s.weight, reps:s.reps, target:true, done:false})),
+        programLabel: progWeek.label
+      };
+    } else {
+      const last = getLastSets(ex);
+      const sets = [];
+      const numSets = last.length || 3;
+      for(let i=0; i<numSets; i++) {
+        sets.push({
+          weight: last[i] ? last[i].weight : 135,
+          reps: last[i] ? last[i].reps : 10,
+          done: false
+        });
+      }
+      exercises[ex] = { sets };
     }
-    exercises[ex] = { sets };
   });
 
   db.activeWorkout = {
@@ -412,6 +447,9 @@ function renderWorkout() {
   
   let lastStr = 'No previous data';
   if(last.length) lastStr = 'Last: ' + last.map(s => `${s.weight}×${s.reps}`).join(', ');
+  
+  const programLabel = ex.programLabel || null;
+  if(programLabel) lastStr = '🎯 ' + programLabel + (last.length ? ' | Last: ' + last.map(s=>`${s.weight}×${s.reps}`).join(', ') : '');
 
   let setsHTML = '';
   ex.sets.forEach((set,i) => {
@@ -774,6 +812,40 @@ function drawChart(entries) {
 function renderSettings() {
   document.getElementById('settingRestTime').value = db.settings.restTime || 180;
   
+  // Render programs
+  const progEditor = document.getElementById('programEditor');
+  if(!db.programs) db.programs = {};
+  const progNames = Object.keys(db.programs);
+  if(progNames.length === 0) {
+    progEditor.innerHTML = '<p style="font-size:11px;color:var(--text2)">No active programs</p>';
+  } else {
+    progEditor.innerHTML = '';
+    progNames.forEach(exName => {
+      const prog = db.programs[exName];
+      const weekKeys = Object.keys(prog.weeks).sort((a,b)=>a-b);
+      const currentWeek = prog.activeWeek || 1;
+      const currentLabel = prog.weeks[currentWeek] ? prog.weeks[currentWeek].label : 'Done';
+      const currentSets = prog.weeks[currentWeek] ? prog.weeks[currentWeek].sets.map(s=>`${s.weight}×${s.reps}`).join(', ') : 'Program complete!';
+      
+      let weekBtns = weekKeys.map(w => {
+        const active = parseInt(w) === currentWeek ? 'background:var(--accent);color:var(--bg);' : '';
+        return `<button class="btn btn-small" style="font-size:7px;padding:4px 6px;margin:2px;${active}" onclick="setProgramWeek('${exName}',${w})">${prog.weeks[w].label}</button>`;
+      }).join('');
+      
+      progEditor.innerHTML += `
+        <div class="card" style="margin:8px 0">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>${exName}</h3>
+            <button class="btn btn-danger btn-small" onclick="deleteProgram('${exName}')" style="font-size:7px;padding:4px 6px">✕</button>
+          </div>
+          <p style="font-size:10px;color:var(--text2);margin:4px 0">${prog.name}</p>
+          <p style="font-size:11px;margin:4px 0">Active: <strong>${currentLabel}</strong></p>
+          <p style="font-size:11px;color:var(--text2);margin:4px 0">${currentSets}</p>
+          <div style="margin-top:8px">${weekBtns}</div>
+        </div>`;
+    });
+  }
+
   const editor = document.getElementById('templateEditor');
   editor.innerHTML = '';
   db.templates.forEach((t,i) => {
@@ -804,6 +876,20 @@ function addTemplate() {
     emoji: '🏋️',
     exercises: exercises.split(',').map(s=>s.trim()).filter(Boolean)
   });
+  saveDB(db);
+  renderSettings();
+}
+
+function setProgramWeek(exercise, week) {
+  if(!db.programs[exercise]) return;
+  db.programs[exercise].activeWeek = parseInt(week);
+  saveDB(db);
+  renderSettings();
+}
+
+function deleteProgram(exercise) {
+  if(!confirm(`Delete program for "${exercise}"?`)) return;
+  delete db.programs[exercise];
   saveDB(db);
   renderSettings();
 }
